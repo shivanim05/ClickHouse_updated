@@ -1,0 +1,12 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: clickhouse-build-pipeline
+spec:
+  tasks:
+    - name: build-clickhouse
+      taskRef:
+        name: clickhouse-build
+      params:
+        - name: repo-url
+          value: $(resources.git-repo.url)

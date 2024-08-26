@@ -1,0 +1,37 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: clickhouse-build
+    spec:
+  steps:
+    - name: clone-repo
+      image: alpine/git
+      script: |
+        #!/bin/sh
+        git clone $(params.repo-url) $(results.workspace.path)
+
+    - name: install-deps
+      image: ubuntu:20.04
+      script: |
+        #!/bin/sh
+        apt-get update
+        apt-get install -y cmake build-essential libssl-dev libzstd-dev liblz4-dev
+        cd $(results.workspace.path)/clickhouse
+        mkdir build
+        cd build
+        cmake ..
+
+    - name: build-clickhouse
+      image: ubuntu:20.04
+      script: |
+        #!/bin/sh
+        cd $(results.workspace.path)/clickhouse/build
+        make -j$(nproc)
+
+  params:
+    - name: repo-url
+      type: string
+      description: The URL of the Git repository to clone
+  results:
+    - name: workspace
+      description: The directory where the repository is cloned

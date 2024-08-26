@@ -1,0 +1,24 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerTemplate
+metadata:
+  name: git-clone-trigger-template
+spec:
+  params:
+    - name: repo-url
+      description: The URL of the Git repository to clone
+      default: https://github.com/shivanim05/ClickHouse_updated.git
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1beta1
+      kind: PipelineRun
+      metadata:
+        generateName: git-clone-pipeline-run-
+      spec:
+        pipelineRef:
+          name: git-clone-pipeline
+        params:
+          - name: repo-url
+            value: $(params.repo-url)
+        resources:
+          - name: git-repo
+            resourceRef:
+              name: github-repo

@@ -1,0 +1,11 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: clickhouse-build-pipeline-run
+spec:
+  pipelineRef:
+    name: clickhouse-build-pipeline
+  resources:
+    - name: git-repo
+      resourceRef:
+        name: github-repo

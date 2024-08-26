@@ -1,0 +1,10 @@
+# github-repo.yaml
+apiVersion: tekton.dev/v1beta1
+kind: PipelineResource
+metadata:
+  name: github-repo
+spec:
+  type: git
+  params:
+    - name: url
+      value: https://github.com/shivanim05/ClickHouse_updated.git

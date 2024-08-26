@@ -1,0 +1,12 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: EventListener
+metadata:
+  name: git-clone-event-listener
+spec:
+  serviceAccountName: default
+  triggers:
+    - name: git-clone-trigger
+      binding:
+        ref: git-clone-trigger-binding
+      template:
+        ref: git-clone-trigger-template
