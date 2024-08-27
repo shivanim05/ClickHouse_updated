@@ -1,11 +1,10 @@
-# trigger-binding.yaml
-apiVersion: triggers.tekton.dev/v1beta1
+apiVersion: triggers.tekton.dev/v1alpha1
 kind: TriggerBinding
 metadata:
-  name: git-clone-trigger-binding
+  name: clickhouse-trigger-binding
 spec:
   params:
-    - name: repo-url
-      value: "https://github.com/shivanim05/ClickHouse_updated.git"
-    - name: branch
-      value: "master"
+    - name: git-revision
+      value: "$(body.head_commit.id)"
+    - name: git-repo-url
+      value: "$(body.repository.url)"
