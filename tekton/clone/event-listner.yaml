@@ -7,6 +7,6 @@ spec:
   triggers:
     - name: git-clone-trigger
       binding:
-        ref: git-clone-trigger-binding
+        ref: trigger-binding
       template:
-        ref: git-clone-trigger-template
+        ref: trigger-template
