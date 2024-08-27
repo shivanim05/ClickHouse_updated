@@ -1,12 +1,27 @@
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: clickhouse-build-pipeline
+  name: build-clickhouse
 spec:
+  workspaces:
+    - name: shared-workspace
   tasks:
-    - name: build-clickhouse
+    - name: clone-repo
       taskRef:
-        name: clickhouse-build
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: shared-workspace
       params:
-        - name: repo-url
-          value: $(resources.git-repo.url)
+        - name: url
+          value: https://github.com/swapnildear/ClickHouse-tekton.git
+        - name: revision
+          value: main
+    - name: build-clickhouse
+      runAfter:
+        - clone-repo
+      taskRef:
+        name: build-clickhouse
+      workspaces:
+        - name: source
+          workspace: shared-workspace
