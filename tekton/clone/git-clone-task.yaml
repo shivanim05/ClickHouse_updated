@@ -3,6 +3,8 @@ kind: Pipeline
 metadata:
   name: build-clickhouse
 spec:
+  workspaces:
+    - name: source
   tasks:
     - name: install-prerequisites
       taskSpec:
@@ -36,5 +38,5 @@ spec:
               mkdir build
               cd build
               cmake ..
-  workspaces:
-    - name: source
+            workspaces:
+              - name: source
