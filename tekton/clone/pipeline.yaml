@@ -14,7 +14,7 @@ spec:
           workspace: shared-workspace
       params:
         - name: url
-          value: https://github.com/swapnildear/ClickHouse-tekton.git
+          value: https://github.com/shivanim05/ClickHouse_updated.git
         - name: revision
           value: main
     - name: build-clickhouse
