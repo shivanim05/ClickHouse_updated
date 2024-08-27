@@ -1,50 +1,38 @@
 apiVersion: tekton.dev/v1beta1
-kind: Pipeline
+kind: Task
+metadata:
+  name: git-clone
+spec:
+  workspaces:
+    - name: output
+  params:
+    - name: url
+      type: string
+      description: The git URL to clone from.
+    - name: revision
+      type: string
+      description: The git revision to checkout.
+      default: main
+  steps:
+    - name: clone
+      image: alpine/git
+      script: |
+        git clone $(params.url) $(workspaces.output.path)
+        cd $(workspaces.output.path)
+        git checkout $(params.revision)
+
+---
+
+apiVersion: tekton.dev/v1beta1
+kind: Task
 metadata:
   name: build-clickhouse
 spec:
   workspaces:
-    - name: output
-      description: The git repo will be cloned onto the volume backing this workspace
-      mountPath: /artifacts
-  tasks:
-    - name: install-prerequisites
-      taskSpec:
-        steps:
-          - name: install
-            image: ubuntu:20.04
-            script: |
-              apt-get update
-              apt-get install -y git cmake ccache clang ninja-build
-    - name: clone-repo
-      taskSpec:
-        steps:
-          - name: clone
-            image: alpine/git
-            script: |
-              git clone https://github.com/ClickHouse/ClickHouse.git
-            workspaces:
-              - name: output
-                description: The git repo will be cloned onto the volume backing this workspace
-                mountPath: /artifacts
-    - name: build-clickhouse
-      runAfter:
-        - install-prerequisites
-        - clone-repo
-      taskSpec:
-        workspaces:
-          - name: output
-            description: The git repo will be cloned onto the volume backing this workspace
-            mountPath: /artifacts
-        steps:
-          - name: build
-            image: cmake:latest
-            script: |
-              cd ClickHouse
-              mkdir build
-              cd build
-              cmake ..
-            workspaces:
-              - name: output
-                description: The git repo will be cloned onto the volume backing this workspace
-                mountPath: /artifacts
+    - name: source
+  steps:
+    - name: build
+      image: clickhouse/binary-builder
+      script: |
+        cd $(workspaces.source.path)
+        ./build.sh
