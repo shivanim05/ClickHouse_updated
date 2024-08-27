@@ -3,7 +3,7 @@ kind: Pipeline
 metadata:
   name: build-clickhouse
 spec:
-   workspaces:
+  workspaces:
     - name: output
       description: The git repo will be cloned onto the volume backing this workspace
       mountPath: /artifacts
@@ -24,18 +24,18 @@ spec:
             script: |
               git clone https://github.com/ClickHouse/ClickHouse.git
             workspaces:
-             - name: output
-               description: The git repo will be cloned onto the volume backing this workspace
-               mountPath: /artifacts
+              - name: output
+                description: The git repo will be cloned onto the volume backing this workspace
+                mountPath: /artifacts
     - name: build-clickhouse
       runAfter:
         - install-prerequisites
         - clone-repo
       taskSpec:
         workspaces:
-         - name: output
-           description: The git repo will be cloned onto the volume backing this workspace
-           mountPath: /artifacts
+          - name: output
+            description: The git repo will be cloned onto the volume backing this workspace
+            mountPath: /artifacts
         steps:
           - name: build
             image: cmake:latest
@@ -45,6 +45,6 @@ spec:
               cd build
               cmake ..
             workspaces:
-             - name: output
-               description: The git repo will be cloned onto the volume backing this workspace
-               mountPath: /artifacts
+              - name: output
+                description: The git repo will be cloned onto the volume backing this workspace
+                mountPath: /artifacts
