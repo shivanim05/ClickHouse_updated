@@ -3,7 +3,7 @@ kind: EventListener
 metadata:
   name: git-clone-event-listener
 spec:
-  serviceAccountName: default
+  serviceAccountName: pipeline
   triggers:
     - name: git-clone-trigger
       binding:
