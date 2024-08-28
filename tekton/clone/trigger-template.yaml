@@ -1,7 +1,7 @@
 apiVersion: triggers.tekton.dev/v1beta1
 kind: TriggerTemplate
 metadata:
-  name: clickhouse-build-template
+  name: trigger-template
 spec:
   params:
     - name: git-revision
