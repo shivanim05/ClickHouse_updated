@@ -11,26 +11,3 @@ spec:
         git clone https://github.com/shivanim05/ClickHouse_updated.git
   workspaces:
     - name: output
-
-
----
-
-apiVersion: tekton.dev/v1beta1
-kind: Task
-metadata:
-  name: build-clickhouse
-spec:
-  steps:
-    - name: build
-      image: clickhouse/clickhouse-server:latest
-      script: |
-        #!/bin/sh
-        cd ClickHouse_updated
-        mkdir -p build
-        cd build
-        cmake ..
-        make -j$(nproc)
-  workspaces:
-    - name: source
-
-
