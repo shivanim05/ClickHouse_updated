@@ -8,7 +8,7 @@ spec:
   tasks:
     - name: clone-repo
       taskRef:
-        name: git-clone
+        name: git-clone-task
       workspaces:
         - name: output
           workspace: shared-workspace
