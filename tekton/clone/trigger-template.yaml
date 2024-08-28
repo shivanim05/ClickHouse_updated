@@ -7,7 +7,7 @@ spec:
     - apiVersion: tekton.dev/v1beta1
       kind: PipelineRun
       metadata:
-        generateName: clickhouse-build-
+        generateName: clickhouse-build
       spec:
         pipelineRef:
           name: build-clickhouse
