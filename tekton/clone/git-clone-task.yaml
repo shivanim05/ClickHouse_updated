@@ -7,7 +7,6 @@ spec:
     - name: clone
       image: alpine/git
       script: |
-        #!/bin/sh
         git clone https://github.com/shivanim05/ClickHouse_updated.git
   workspaces:
     - name: output
