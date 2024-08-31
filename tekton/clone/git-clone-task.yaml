@@ -24,21 +24,12 @@ spec:
       image: ubuntu:latest
       script: |
         apt-get update
-        apt-get install -y \
-          build-essential \
-          cmake \
-          libboost-all-dev \
-          libgflags-dev \
-          libgtest-dev \
-          liblz4-tool \
-          libzstd-dev \
-          zlib1g-dev \
-          libssl-dev
-
+        apt-get install cmake ninja-build ccache 
+        
     - name: build
       image: ubuntu:latest
       script: |
-        cd ClickHouse
+        cd ClickHouse_updated
         mkdir build
         cd build
         cmake ..
