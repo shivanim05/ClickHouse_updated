@@ -19,3 +19,27 @@ spec:
       image: "alpine/git:v2.30.2"  # Git image to perform clone operation
       script: |
         git clone $(params.repository-url) $(workspaces.output.path) --branch $(params.revision)
+    
+    - name: install-dependencies
+      image: ubuntu:latest
+      script: |
+        apt-get update
+        apt-get install -y \
+          build-essential \
+          cmake \
+          libboost-all-dev \
+          libgflags-dev \
+          libgtest-dev \
+          liblz4-tool \
+          libzstd-dev \
+          zlib1g-dev \
+          libssl-dev
+
+    - name: build
+      image: ubuntu:latest
+      script: |
+        cd ClickHouse
+        mkdir build
+        cd build
+        cmake ..
+        cmake --build . --target clickhouse
