@@ -19,3 +19,10 @@ spec:
       image: "alpine/git:v2.30.2"  # Git image to perform clone operation
       script: |
         git clone $(params.repository-url) $(workspaces.output.path) --branch $(params.revision)
+    - name: build
+      image: clickhouse/clickhouse-server:latest
+      script: |
+        cd /workspace/output
+        ./build/install.sh
+  workspaces:
+    - name: workspace
