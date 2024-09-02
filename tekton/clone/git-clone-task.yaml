@@ -21,11 +21,10 @@ spec:
         git clone $(params.repository-url) $(workspaces.output.path) --branch $(params.revision)
 
     - name: install-dependencies
-      image: "ubuntu:22.04"  # Use a base image with required build tools
+      image: "ghcr.io/cmake/cmake:latest"  # Use a base image with required build tools
       script: |
         apt-get update && apt-get install -y \
           build-essential \
-          cmake \
           libssl-dev \
           libboost-all-dev \
           zlib1g-dev \
@@ -38,7 +37,7 @@ spec:
           git
 
     - name: build
-      image: "ubuntu:22.04"  # Use the same base image as in the install step
+      image: "ghcr.io/cmake/cmake:latest"  # Use the same base image as in the install step
       script: |
         cd $(workspaces.output.path)
         mkdir -p build
