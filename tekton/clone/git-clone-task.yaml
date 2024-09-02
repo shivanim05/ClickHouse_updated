@@ -21,13 +21,13 @@ spec:
         git clone $(params.repository-url) $(workspaces.output.path) --branch $(params.revision)
     
     - name: install-dependencies
-      image: ubuntu:latest
+      image: "ubuntu:latest"
       script: |
         apt-get update
         apt-get install cmake ninja-build ccache 
         
     - name: build
-      image: ubuntu:latest
+      image: "ubuntu:latest"
       script: |
         cd ClickHouse_updated
         mkdir build
