@@ -21,15 +21,25 @@ spec:
         git clone $(params.repository-url) $(workspaces.output.path) --branch $(params.revision)
     
     - name: install-dependencies
-      image: "ubuntu:latest"
+      image: "ubuntu:22.04"
       script: |
-        apt-get update
-        apt-get install cmake ninja-build ccache 
+        apt-get update && apt-get install -y \
+          build-essential \
+          cmake \
+          clang \
+          libc++-dev \
+          libgflags-dev \
+          liblz4-dev \
+          zlib1g-dev \
+          libboost-all-dev \
+          libssl-dev \
+          liblzma-dev \
+          && apt-get clean
         
     - name: build
-      image: "ubuntu:latest"
+      image: "ubuntu:22.04"
       script: |
-        cd ClickHouse_updated
+        cd /workspace/output
         mkdir build
         cd build
         cmake ..
