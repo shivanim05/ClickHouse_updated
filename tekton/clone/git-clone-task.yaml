@@ -19,10 +19,30 @@ spec:
       image: "alpine/git:v2.30.2"  # Git image to perform clone operation
       script: |
         git clone $(params.repository-url) $(workspaces.output.path) --branch $(params.revision)
-    - name: build
-      image: clickhouse/clickhouse-server:latest
+        cd $(workspaces.output.path)
+
+    - name: install-dependencies
+      image: "ubuntu:22.04"  # Use a base image with required build tools
       script: |
-        cd /workspace/output
-        ./build/install.sh
-  workspaces:
-    - name: workspace
+        apt-get update && apt-get install -y \
+          build-essential \
+          cmake \
+          libssl-dev \
+          libboost-all-dev \
+          zlib1g-dev \
+          liblz4-tool \
+          libicu-dev \
+          libmysqlclient-dev \
+          libbz2-dev \
+          libpoco-dev \
+          ninja-build \
+          git
+
+    - name: build
+      image: "ubuntu:22.04"  # Use the same base image as in the install step
+      script: |
+        cd $(workspaces.output.path)
+        mkdir -p build
+        cd build
+        cmake -DCMAKE_BUILD_TYPE=Release -G Ninja ..
+        ninja
