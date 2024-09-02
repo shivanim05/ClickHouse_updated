@@ -19,7 +19,6 @@ spec:
       image: "alpine/git:v2.30.2"  # Git image to perform clone operation
       script: |
         git clone $(params.repository-url) $(workspaces.output.path) --branch $(params.revision)
-        cd $(workspaces.output.path)
 
     - name: install-dependencies
       image: "ubuntu:22.04"  # Use a base image with required build tools
