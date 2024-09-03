@@ -11,36 +11,63 @@ spec:
       type: string
       description: The Git revision (branch, tag, commit SHA) to checkout
       default: "master"
+    - name: output-dir
+      type: string
+      description: The directory for the output artifacts
+      default: "build_results"
   workspaces:
     - name: output
-      description: The workspace where the Git repository will be cloned
+      description: The workspace where the Git repository will be cloned and build artifacts will be stored
   steps:
-    - name: clone
-      image: "alpine/git:v2.30.2"  # Git image to perform clone operation
-      script: |
-        git clone $(params.repository-url) $(workspaces.output.path) --branch $(params.revision)
-
-    - name: install-dependencies
-      image: "ghcr.io/cmake/cmake:latest"  # Use a base image with required build tools
-      script: |
-        apt-get update && apt-get install -y \
-          build-essential \
-          libssl-dev \
-          libboost-all-dev \
-          zlib1g-dev \
-          liblz4-tool \
-          libicu-dev \
-          libmysqlclient-dev \
-          libbz2-dev \
-          libpoco-dev \
-          ninja-build \
-          git
-
     - name: build
-      image: "ghcr.io/cmake/cmake:latest"  # Use the same base image as in the install step
+      image: ubuntu:22.04
       script: |
+        # Enable debug mode
+        set -x
+
+        # Set DEBIAN_FRONTEND to noninteractive
+        export DEBIAN_FRONTEND=noninteractive
+
+        # Update package list and install required packages
+        apt-get update
+        apt-get install -y git ccache python3 ninja-build nasm yasm gawk lsb-release wget software-properties-common gnupg curl
+
+        # Install the latest CMake version
+        wget -qO- https://apt.kitware.com/keys/kitware-archive-latest.asc | apt-key add -
+        apt-add-repository 'deb https://apt.kitware.com/ubuntu/ jammy main'
+        apt-get update
+        apt-get install -y cmake
+
+        # Install LLVM
+        wget -O - https://apt.llvm.org/llvm.sh | bash
+
+        # Set environment variables for Clang
+        export CC=clang-18
+        export CXX=clang++-18
+
+        # Install and configure Rust non-interactively
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+
+        # Source Rust environment script
+        . $HOME/.cargo/env
+
+        # Configure Rust toolchain and components
+        rustup toolchain install nightly-2024-04-01
+        rustup default nightly-2024-04-01
+        rustup component add rust-src
+
+        # Clone the ClickHouse repository and build
+        git clone --recursive --shallow-submodules $(params.repository-url) $(workspaces.output.path)
         cd $(workspaces.output.path)
-        mkdir -p build
-        cd build
-        cmake -DCMAKE_BUILD_TYPE=Release -G Ninja ..
-        ninja
+        mkdir build
+        cmake -S . -B build
+        cmake --build build
+      workspaces:
+        - name: output
+      resources:
+        requests:
+          memory: "1Gi"
+          cpu: "500m"
+        limits:
+          memory: "2Gi"
+          cpu: "1000m"
