@@ -52,7 +52,7 @@ spec:
         echo "Configure Rust toolchain and components"
         /root/.cargo/bin/rustup toolchain install nightly-2024-04-01
         /root/.cargo/bin/rustup default nightly-2024-04-01
-        /root/.cargo/bin/ rustup component add rust-src
+        /root/.cargo/bin/rustup component add rust-src
 
         echo "Cloning repository $(params.repository-url) on branch $(params.revision)"
         git clone --recursive --shallow-submodules $(params.repository-url) $(workspaces.output.path) --branch $(params.revision)
