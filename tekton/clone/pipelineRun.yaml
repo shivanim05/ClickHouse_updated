@@ -12,4 +12,5 @@ spec:
       value: master
   workspaces:
     - name: shared-workspace
-      emptyDir: {}  # Using emptyDir for simplicity; use PVC in production
+      emptyDir: {}
+  timeout: "9h"

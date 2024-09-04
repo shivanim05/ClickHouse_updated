@@ -22,52 +22,52 @@ spec:
     - name: build
       image: ubuntu:22.04
       script: |
-        # Enable debug mode
+        echo "Enable debug mode"
         set -x
 
-        # Set DEBIAN_FRONTEND to noninteractive
-        export DEBIAN_FRONTEND=noninteractive
-
-        # Update package list and install required packages
+        echo "Update package list and install dependencies"
         apt-get update
         apt-get install -y git ccache python3 ninja-build nasm yasm gawk lsb-release wget software-properties-common gnupg curl
 
-        # Install the latest CMake version
+        echo "Installing the latest CMake version"
         wget -qO- https://apt.kitware.com/keys/kitware-archive-latest.asc | apt-key add -
         apt-add-repository 'deb https://apt.kitware.com/ubuntu/ jammy main'
         apt-get update
         apt-get install -y cmake
+        echo "CMake installation completed"
 
-        # Install LLVM
+        echo "Install LLVM"
         wget -O - https://apt.llvm.org/llvm.sh | bash
 
-        # Set environment variables for Clang
+        echo "Setting clang details"
         export CC=clang-18
         export CXX=clang++-18
 
-        # Install and configure Rust non-interactively
+        echo "Installing and configuring Rust non-interactively"
         curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 
-        # Source Rust environment script
-        . $HOME/.cargo/env
+        echo "Set path for rustup"
+        export PATH="$HOME/.cargo/bin:$PATH"
 
-        # Configure Rust toolchain and components
-        rustup toolchain install nightly-2024-04-01
-        rustup default nightly-2024-04-01
-        rustup component add rust-src
+        echo "Configure Rust toolchain and components"
+        /root/.cargo/bin/rustup toolchain install nightly-2024-04-01
+        /root/.cargo/bin/rustup default nightly-2024-04-01
+        /root/.cargo/bin/ rustup component add rust-src
 
-        # Clone the ClickHouse repository and build
-        git clone --recursive --shallow-submodules $(params.repository-url) $(workspaces.output.path)
+        echo "Cloning repository $(params.repository-url) on branch $(params.revision)"
+        git clone --recursive --shallow-submodules $(params.repository-url) $(workspaces.output.path) --branch $(params.revision)
+        echo "Repository cloned successfully"
         cd $(workspaces.output.path)
         mkdir build
+        echo "Start build proces using cmake"
         cmake -S . -B build
         cmake --build build
       workspaces:
         - name: output
       resources:
         requests:
-          memory: "1Gi"
-          cpu: "500m"
+          memory: "8Gi"
+          cpu: "4000m"
         limits:
-          memory: "2Gi"
-          cpu: "1000m"
+          memory: "16Gi"
+          cpu: "16000m"
